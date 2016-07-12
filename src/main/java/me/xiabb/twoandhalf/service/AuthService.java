@@ -104,6 +104,7 @@ public class AuthService {
             loginInfo.setMessage("ERROR_MONGO_DATABASE");
         }
         if (user==null) {
+            String currentTime = LocalDateTime.now().toString();
             try {
                 String id = weiboId + ".weibo";
                 String username = id;
@@ -111,9 +112,12 @@ public class AuthService {
                         new Document("_id", weiboId + ".weibo")
                                 .append("username", weiboId + ".weibo"));
                 loginInfo.setStatus("ok");
+                loginInfo.setCreatedAt(currentTime);
+                loginInfo.setUpdatedAt(currentTime);
                 loginInfo.setMessage("INFO_COMPLETE_USER");
                 loginInfo.setId(id);
                 loginInfo.setUsername(username);
+                loginInfo.setSessionToken(username);
             } catch (Exception e) {
                 logger.error("fail to new user", e.getMessage());
                 loginInfo.setStatus("error");

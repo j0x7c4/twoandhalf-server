@@ -47,10 +47,9 @@ public class ProfileService {
         Profile profile = new Profile();
         String currentTime = LocalDateTime.now().toString();
         BasicDBObject query = new BasicDBObject();
-        query.put("_id", sessionToken);
-        BasicDBObject updateProfile = new BasicDBObject();
-        updateProfile.append("email", update.get("email").toString()).append("updatedAt", currentTime);
-        userCollection.updateOne(query, updateProfile, (new UpdateOptions()).upsert(true));
+        query.put("username", sessionToken);
+        BasicDBObject updateProfile = new BasicDBObject(update).append("updatedAt", currentTime);
+        userCollection.updateOne(query, new Document("$set", updateProfile), (new UpdateOptions()).upsert(true));
         return profile;
     }
 }

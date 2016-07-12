@@ -8,6 +8,9 @@ public class LoginInfo extends BaseInfo {
     private String username;
     private String email;
     private String weiboId;
+    private String createdAt;
+    private String updatedAt;
+    private String sessionToken;
 
     public String getId() {
         return id;
@@ -39,5 +42,29 @@ public class LoginInfo extends BaseInfo {
 
     public void setWeiboId(String weiboId) {
         this.weiboId = weiboId;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 }

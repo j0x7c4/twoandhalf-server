@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.mongodb.client.model.Filters;
 
+import java.time.LocalDateTime;
+
 /**
  * Created by jie on 16-7-12.
  */
@@ -39,15 +41,18 @@ public class AuthService {
         SignupInfo signupInfo = new SignupInfo();
         try {
             if (!checkUserExist(username, email)) {
+                String currentTime = LocalDateTime.now().toString();
                 collection.insertOne(
                         new Document("_id", username)
                                 .append("username", username)
                                 .append("email", email)
-                                .append("password", password));
-                signupInfo.setEmail(email);
+                                .append("password", password)
+                                .append("createdAt", currentTime)
+                                .append("updatedAt", currentTime));
                 signupInfo.setId(username);
                 signupInfo.setStatus("ok");
                 signupInfo.setId(username);
+                signupInfo.setCreatedAt(currentTime);
             }
             else {
                 signupInfo.setStatus("error");
@@ -75,6 +80,10 @@ public class AuthService {
                 loginInfo.setId(user.getString("_id"));
                 loginInfo.setUsername(user.getString("username"));
                 loginInfo.setEmail(user.getString("email"));
+                loginInfo.setUpdatedAt(user.getString("updatedAt"));
+                loginInfo.setCreatedAt(user.getString("createdAt"));
+                loginInfo.setWeiboId(user.getString("weiboId"));
+                loginInfo.setSessionToken(username);
             }
         } catch (Exception e) {
             logger.error("fail to find user", e.getMessage());

@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import me.xiabb.twoandhalf.service.AuthService;
+import me.xiabb.twoandhalf.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -38,5 +39,11 @@ public class AppConfig {
     public AuthService authService() {
         AuthService authService = new AuthService(mongoDatabase);
         return authService;
+    }
+
+    @Bean
+    public ProfileService profileService() {
+        ProfileService profileService = new ProfileService(mongoDatabase);
+        return profileService;
     }
 }

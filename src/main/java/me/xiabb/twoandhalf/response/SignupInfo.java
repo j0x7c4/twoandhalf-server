@@ -5,8 +5,8 @@ package me.xiabb.twoandhalf.response;
  */
 public class SignupInfo extends BaseInfo{
     private String id;
-    private String email;
-    private String username;
+    private String createdAt;
+    private String sessionToken;
 
     public String getId() {
         return id;
@@ -16,19 +16,20 @@ public class SignupInfo extends BaseInfo{
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getUsername() {
-        return username;
+    public String getSessionToken() {
+        return sessionToken;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
     }
 }

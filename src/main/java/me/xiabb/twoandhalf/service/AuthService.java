@@ -8,6 +8,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import com.mongodb.client.model.Filters;
 
 /**
  * Created by jie on 16-7-12.
@@ -23,18 +24,99 @@ public class AuthService {
         collection = mongoDatabase.getCollection("Users");
     }
 
+    public boolean checkUserExist (String username, String email) {
+        boolean flag;
+        try {
+            flag = collection.find(Filters.or(Filters.eq("username",username),Filters.eq("email",email))).first()!=null;
+        } catch (Exception e) {
+            logger.error("fail to find");
+            flag = false;
+        }
+        return flag;
+    }
+
     public SignupInfo signUp(String username, String email, String password) {
         SignupInfo signupInfo = new SignupInfo();
+        try {
+            if (!checkUserExist(username, email)) {
+                collection.insertOne(
+                        new Document("_id", username)
+                                .append("username", username)
+                                .append("email", email)
+                                .append("password", password));
+                signupInfo.setEmail(email);
+                signupInfo.setId(username);
+                signupInfo.setStatus("ok");
+                signupInfo.setId(username);
+            }
+            else {
+                signupInfo.setStatus("error");
+                signupInfo.setMessage("ERROR_USER_ALREADY_EXIST");
+            }
+        } catch (Exception e) {
+            logger.error("fail to new user", e.getMessage());
+            signupInfo.setStatus("error");
+            signupInfo.setMessage("ERROR_MONGO_DATABASE");
+        }
         return signupInfo;
     }
 
     public LoginInfo login(String username, String password) {
         LoginInfo loginInfo = new LoginInfo();
+        try {
+            Document user = collection.find(
+                    Filters.and(Filters.or(Filters.eq("username",username),Filters.eq("email",username)),
+                            Filters.eq("password", password))).first();
+            if (user==null) {
+                loginInfo.setStatus("error");
+                loginInfo.setMessage("ERROR_USER_NOT_FOUND");
+            } else {
+                loginInfo.setStatus("ok");
+                loginInfo.setId(user.getString("_id"));
+                loginInfo.setUsername(user.getString("username"));
+                loginInfo.setEmail(user.getString("email"));
+            }
+        } catch (Exception e) {
+            logger.error("fail to find user", e.getMessage());
+            loginInfo.setStatus("error");
+            loginInfo.setMessage("ERROR_MONGO_DATABASE");
+        }
         return loginInfo;
     }
 
     public LoginInfo weiboLogin(String weiboId) {
         LoginInfo loginInfo = new LoginInfo();
+        Document user = null;
+        try {
+            user = collection.find(Filters.eq("weiboId",weiboId)).first();
+        } catch (Exception e) {
+            logger.error("fail to new user", e.getMessage());
+            loginInfo.setStatus("error");
+            loginInfo.setMessage("ERROR_MONGO_DATABASE");
+        }
+        if (user==null) {
+            try {
+                String id = weiboId + ".weibo";
+                String username = id;
+                collection.insertOne(
+                        new Document("_id", weiboId + ".weibo")
+                                .append("username", weiboId + ".weibo"));
+                loginInfo.setStatus("ok");
+                loginInfo.setMessage("INFO_COMPLETE_USER");
+                loginInfo.setId(id);
+                loginInfo.setUsername(username);
+            } catch (Exception e) {
+                logger.error("fail to new user", e.getMessage());
+                loginInfo.setStatus("error");
+                loginInfo.setMessage("ERROR_MONGO_DATABASE");
+            }
+        } else {
+            loginInfo.setId(user.getString("_id"));
+            loginInfo.setUsername(user.getString("username"));
+            loginInfo.setEmail(user.getString("email"));
+            loginInfo.setWeiboId(user.getString("weiboId"));
+            loginInfo.setStatus("ok");
+        }
         return loginInfo;
     }
 }

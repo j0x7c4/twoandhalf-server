@@ -67,5 +67,4 @@ public class AccountController {
         Profile profile = profileService.updateProfileBySessionToken(sessionToken, update);
         return profile;
     }
-
 }

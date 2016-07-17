@@ -51,7 +51,7 @@ public class AuthService {
                                 .append("updatedAt", currentTime));
                 signupInfo.setId(username);
                 signupInfo.setStatus("ok");
-                signupInfo.setId(username);
+                signupInfo.setSessionToken(username);
                 signupInfo.setCreatedAt(currentTime);
             }
             else {
@@ -110,7 +110,10 @@ public class AuthService {
                 String username = id;
                 collection.insertOne(
                         new Document("_id", weiboId + ".weibo")
-                                .append("username", weiboId + ".weibo"));
+                                .append("username", weiboId + ".weibo")
+                                .append("weiboId", weiboId)
+                                .append("createdAt", currentTime)
+                                .append("updatedAt", currentTime));
                 loginInfo.setStatus("ok");
                 loginInfo.setCreatedAt(currentTime);
                 loginInfo.setUpdatedAt(currentTime);
@@ -118,6 +121,7 @@ public class AuthService {
                 loginInfo.setId(id);
                 loginInfo.setUsername(username);
                 loginInfo.setSessionToken(username);
+                loginInfo.setWeiboId(weiboId);
             } catch (Exception e) {
                 logger.error("fail to new user", e.getMessage());
                 loginInfo.setStatus("error");
@@ -129,6 +133,7 @@ public class AuthService {
             loginInfo.setEmail(user.getString("email"));
             loginInfo.setWeiboId(user.getString("weiboId"));
             loginInfo.setStatus("ok");
+            loginInfo.setSessionToken(user.getString("username"));
         }
         return loginInfo;
     }
